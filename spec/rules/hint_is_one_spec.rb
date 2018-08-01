@@ -9,7 +9,7 @@ RSpec.describe HintIsOne do
 
   subject { described_class.new(game: game) }
 
-  describe 'perform' do
+  describe '#perform' do
     let(:board) do
 <<-BOARD
     3   2   2   1
