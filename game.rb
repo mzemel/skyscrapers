@@ -5,7 +5,7 @@ class Game
 
   def initialize(data:)
     raise "Incorrect number of hints" if data.size % 4 != 0
-    @power = data.size / 4
+    @power = Math.sqrt(data.size).to_i
     @data = data
     @hints = []
     @cells = []
@@ -65,6 +65,13 @@ class Game
     end
   end
 
+  def remove_option_from_cells(cell)
+    0.upto(power-1).each do |i|
+      cell_at(i, cell.y).remove_option(cell.value)
+      cell_at(cell.x, i).remove_option(cell.value)
+    end
+  end
+
   private
 
   attr_reader :data
@@ -81,7 +88,7 @@ class Game
   def initialize_cells
     power.times do |y|
       power.times do |x|
-        cells << Cell.new(x: x, y: y, value: nil, solved: false)
+        cells << Cell.new(x: x, y: y, value: nil, game: self, options: (1..power).to_a)
       end
     end
   end
