@@ -31,6 +31,20 @@ class Game
     cell_at(x,y)
   end
 
+  def cell_opposite_from(hint)
+    x,y = case hint.quadrant
+    when 0
+      [hint.position, power - 1]
+    when 1
+      [0, hint.position]
+    when 2
+      [hint.position, 0]
+    when 3
+      [power - 1, hint.position]
+    end
+    cell_at(x,y)
+  end
+
   private
 
   attr_reader :data

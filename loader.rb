@@ -4,6 +4,7 @@ require './game.rb'
 require './printer.rb'
 require './rule.rb'
 require './rules/hint_is_one.rb'
+require './rules/one_opposite_two.rb'
 require './control.rb'
 
 require 'rb-readline'

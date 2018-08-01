@@ -3,27 +3,31 @@ require 'yaml'
 class Control
   attr_reader :game, :cycle
 
-  RULES = [HintIsOne]
+  RULES = [HintIsOne, OneOppositeTwo]
 
   def initialize(game: nil, file:)
     @game = game
     @file = file
-    @cycle = 0
+    @cycle = 1
     load_from_file unless game
   end
 
   def perform
+    print_board if ENV['print']
     loop do
-      print_board if ENV['print']
       changed_board = false
       RULES.each do |klass|
         rule = klass.new(game: game)
         rule.perform
-        changed_board ||= rule.changed_board?
+        if rule.changed_board?
+          changed_board ||= true
+          @cycle += 1
+          print_board if ENV['print']
+        end
       end
       break unless changed_board
-      @cycle += 1
     end
+    # win, lose, or guess
   end
 
   private
@@ -37,7 +41,7 @@ class Control
   end
 
   def print_board
-    puts "Cycle: #{cycle}"
+    puts "\nCycle: #{cycle}"
     Printer.new(game: game).print
   end
 end

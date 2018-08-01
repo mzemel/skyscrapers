@@ -1,7 +1,7 @@
 class HintIsOne < Rule
   def perform
     game.hints.each do |hint|
-      next if hint.value != 1 || game.cell_next_to(hint).solved?
+      next unless hint.value == 1 && !game.cell_next_to(hint).solved?
       game.cell_next_to(hint).value = game.power
       @changed_board = true
     end

@@ -2,7 +2,9 @@ require 'rspec'
 require_relative '../loader.rb'
 
 RSpec.describe Control do
-  subject { described_class.new(game: game) }
+  let(:file) { }
+
+  subject { described_class.new(game: game, file: file) }
 
   context 'when game is given' do
     let(:data) do
@@ -17,9 +19,10 @@ RSpec.describe Control do
 
   context 'when no game is given' do
     let(:game) { }
+    let(:file) { '1' }
 
     it 'loads game data from .yml file' do
-      expected_hints = YAML.load_file('./examples/1.yml')['hints']
+      expected_hints = YAML.load_file("./examples/#{file}.yml")['hints']
       expect(subject.game.hints.map(&:value)).to eq(expected_hints)
     end
 
@@ -27,11 +30,6 @@ RSpec.describe Control do
       it 'applies rules to the game' do
         subject.perform
         expect(subject.game.cells[3]).to be_solved
-      end
-
-      it 'breaks after 1 cycle' do
-        subject.perform
-        expect(subject.cycle).to eq 1
       end
     end
   end
