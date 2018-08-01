@@ -13,6 +13,24 @@ class Game
     initialize_cells
   end
 
+  def cell_at(x,y)
+    cells[y*power + x]
+  end
+
+  def cell_next_to(hint)
+    x,y = case hint.quadrant
+    when 0
+      [hint.position, 0]
+    when 1
+      [power - 1, hint.position]
+    when 2
+      [hint.position, power - 1]
+    when 3
+      [0, hint.position]
+    end
+    cell_at(x,y)
+  end
+
   private
 
   attr_reader :data
@@ -27,9 +45,9 @@ class Game
   end
 
   def initialize_cells
-    power.times do |x|
-      power.times do |y|
-        cells << Cell.new(x: x, y: y, value: nil)
+    power.times do |y|
+      power.times do |x|
+        cells << Cell.new(x: x, y: y, value: nil, solved: false)
       end
     end
   end
