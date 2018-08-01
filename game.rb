@@ -45,6 +45,19 @@ class Game
     cell_at(x,y)
   end
 
+  def cells_in_lane_of(hint)
+    case hint.quadrant
+    when 0
+      0.upto(power-1).map { |y| cell_at(hint.position, y) }
+    when 1
+      (power - 1).downto(0).map { |x| cell_at(x, hint.position) }
+    when 2
+      (power - 1).downto(0).map { |y| cell_at(hint.position, y) }
+    when 3
+      0.upto(power-1).map { |x| cell_at(x, hint.position) }
+    end
+  end
+
   private
 
   attr_reader :data
