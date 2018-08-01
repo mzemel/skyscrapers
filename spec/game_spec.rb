@@ -87,4 +87,47 @@ RSpec.describe Game do
       end
     end
   end
+
+  describe '#hint_opposite_from' do
+    let(:board) do
+<<-BOARD
+    3   2   2   1
+  +---------------+
+4 |   |   |   |   | 1
+  +---------------+
+2 |   |   |   |   | 2
+  +---------------+
+3 |   |   |   |   | 2
+  +---------------+
+1 |   |   |   |   | 2
+  +---------------+
+    1   3   2   2
+BOARD
+    end
+
+    it 'opposite of hint[0] is 1' do
+      opposite_hint = subject.hint_opposite_from(subject.hints[0])
+      expect(opposite_hint.value).to eq 1
+    end
+
+    it 'opposite of hint[3] is 2' do
+      opposite_hint = subject.hint_opposite_from(subject.hints[3])
+      expect(opposite_hint.value).to eq 2
+    end
+
+    it 'opposite of hint[5] is 2' do
+      opposite_hint = subject.hint_opposite_from(subject.hints[5])
+      expect(opposite_hint.value).to eq 2
+    end
+
+    it 'opposite of hint[11] is 3' do
+      opposite_hint = subject.hint_opposite_from(subject.hints[11])
+      expect(opposite_hint.value).to eq 3
+    end
+
+    it 'opposite of hint[15] is 1' do
+      opposite_hint = subject.hint_opposite_from(subject.hints[15])
+      expect(opposite_hint.value).to eq 1
+    end
+  end
 end

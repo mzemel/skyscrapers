@@ -58,6 +58,13 @@ class Game
     end
   end
 
+  def hint_opposite_from(hint)
+    hints.detect do |opp|
+      opp.position == hint.position &&
+      opp.quadrant == (hint.quadrant + 2) % 4
+    end
+  end
+
   private
 
   attr_reader :data

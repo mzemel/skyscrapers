@@ -3,7 +3,7 @@ require 'yaml'
 class Control
   attr_reader :game, :cycle
 
-  RULES = [HintIsOne, OneOppositeTwo, HintIsGamePower]
+  RULES = [HintIsOne, OneOppositeTwo, HintIsGamePower, OppositeHintsAddUp, OneCellLeft]
 
   def initialize(game: nil, file:)
     @game = game
