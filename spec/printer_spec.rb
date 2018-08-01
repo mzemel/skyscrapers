@@ -11,17 +11,17 @@ RSpec.describe Printer do
 
   let(:board) do
 <<-BOARD
-   3  2  2  1
-  +-----------+
-4 |  |  |  |  | 1
-  +-----------+
-2 |  |  |  |  | 2
-  +-----------+
-3 |  |  |  |  | 2
-  +-----------+
-1 |  |  |  |  | 2
-  +-----------+
-    1  3  2  2
+    3   2   2   1
+  +---------------+
+4 |   |   |   |   | 1
+  +---------------+
+2 |   |   |   |   | 2
+  +---------------+
+3 |   |   |   |   | 2
+  +---------------+
+1 |   |   |   |   | 2
+  +---------------+
+    1   3   2   2
 BOARD
   end
 
@@ -29,8 +29,34 @@ BOARD
     expect(subject.board).to eq(board)
   end
 
-  xit 'will print to STDOUT' do
-    expect(Kernel).to receive(:puts)
+  it 'will print to STDOUT' do
+    expect(STDOUT).to receive(:puts)
     subject.print
+  end
+
+  context 'when a cell has a value' do
+    let(:board) do
+<<-BOARD
+    3   2   2   1
+  +---------------+
+4 | 3 |   |   |   | 1
+  +---------------+
+2 |   |   |   |   | 2
+  +---------------+
+3 |   |   |   |   | 2
+  +---------------+
+1 |   |   |   |   | 2
+  +---------------+
+    1   3   2   2
+BOARD
+  end
+
+    before do
+      game.cells.first.value = 3
+    end
+
+    it 'formats correctly' do
+      expect(subject.board).to eq(board)
+    end
   end
 end

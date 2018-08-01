@@ -1,5 +1,6 @@
 class Cell
-  attr_reader :x, :y, :value
+  attr_reader :x, :y
+  attr_accessor :value
 
   def initialize(x:, y:, value:)
     @x = x
