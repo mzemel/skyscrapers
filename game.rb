@@ -120,8 +120,9 @@ class Game
     cell_to_guess = cells.detect { |cell| cell.options.size == 2 }
     cell_to_guess ||= cells.detect { |cell| cell.options.size == 3 }
     options = cell_to_guess.options
-    cell_to_guess.value = options.shift
-    add_guess Guess.new(cell: cell_to_guess, other_options: options)
+    chosen_value = options.shift
+    add_guess(Guess.new(cell: cell_to_guess, other_options: options))
+    cell_to_guess.value = chosen_value
   end
 
   def add_guess(guess)
@@ -131,11 +132,15 @@ class Game
   # TODO: Every cell set during this guess depth must be reverted and their options restored
   # But also when their options are modified, they must be restored as well.
   def undo_last_guess
+    cells.each { |cell| cell.revert_to_version(guess_depth - 1) }
     last_guess = guesses.pop
     next_guess_option = last_guess.other_options.pop
-    last_guess.cell.value = next_guess_option
-    return if last_guess.other_options.empty?
-    add_guess(last_guess)
+    if last_guess.other_options.empty?
+      last_guess.cell.value = next_guess_option
+    else
+      add_guess(last_guess)
+      last_guess.cell.value = next_guess_option
+    end
   end
 
   def guess_depth
