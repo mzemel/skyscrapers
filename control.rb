@@ -17,7 +17,6 @@ class Control
   end
 
   def perform
-    print_board if ENV['print']
     loop do
       changed_board = false
       RULES.each do |klass|
@@ -26,7 +25,9 @@ class Control
         if rule.changed_board?
           changed_board ||= true
           @cycle += 1
+          system "clear"
           print_board if ENV['print']
+          sleep 0.05
         end
       end
       break unless changed_board
@@ -45,7 +46,14 @@ class Control
   end
 
   def print_board
-    puts "\nCycle: #{cycle}"
+    puts "Cycle: #{cycle}"
+    puts "Depth: #{game.guess_depth}"
+    guess = game.guesses.last
+    if guess
+      puts "Last guess: #{guess.cell.value} at [#{guess.cell.x},#{guess.cell.y}]"
+    else
+      puts "Last guess: "
+    end
     Printer.new(game: game).print
   end
 
@@ -58,11 +66,8 @@ class Control
   def check_for_loss
     return unless game.invalid?
     if game.guess_depth > 0
-      puts "\n^ Bad state encountered; undoing last guess"
-      guess = game.guesses.last
-      puts "Guess was #{guess.cell.value} at [#{guess.cell.x},#{guess.cell.y}] (other options: #{guess.other_options.join(',')})"
+      puts "FAKE NEWS"
       game.undo_last_guess
-      puts "Guess depth is reset to #{game.guess_depth}"
       return perform
     else
       puts 'Failure'
@@ -72,9 +77,6 @@ class Control
 
   def make_guess
     game.make_guess
-    guess = game.guesses.last
-    puts "Guessing #{guess.cell.value} at [#{guess.cell.x},#{guess.cell.y}] (other options: #{guess.other_options.join(',')})"
-    puts "Guess depth: #{game.guess_depth}"
     perform
   end
 end

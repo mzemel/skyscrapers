@@ -119,6 +119,7 @@ class Game
   def make_guess
     cell_to_guess = cells.detect { |cell| cell.options.size == 2 }
     cell_to_guess ||= cells.detect { |cell| cell.options.size == 3 }
+    cell_to_guess ||= cells.detect { |cell| cell.options.size == 4 }
     options = cell_to_guess.options
     chosen_value = options.shift
     add_guess(Guess.new(cell: cell_to_guess, other_options: options))
