@@ -101,6 +101,7 @@ class Game
   def incorrect_cells_seen?
     # TODO: Move this into the hint responsibility
     hints.any? do |hint|
+      next unless hint.value
       highest_cell = 0
       cells_seen = 0
       cells_with_values = 0
@@ -120,6 +121,7 @@ class Game
     cell_to_guess = cells.detect { |cell| cell.options.size == 2 }
     cell_to_guess ||= cells.detect { |cell| cell.options.size == 3 }
     cell_to_guess ||= cells.detect { |cell| cell.options.size == 4 }
+    cell_to_guess ||= cells.detect { |cell| cell.options.size == 5 }
     options = cell_to_guess.options
     chosen_value = options.shift
     add_guess(Guess.new(cell: cell_to_guess, other_options: options))
@@ -160,7 +162,8 @@ class Game
     data.each_slice(power).with_index do |hints_slice, quadrant|
       hints_slice.each_with_index do |hint, position|
         position = power - (position + 1) if [2,3].include?(quadrant)
-        @hints << Hint.new(quadrant: quadrant, value: hint, position: position)
+        hint = hint.to_i.zero? ? nil : hint.to_i
+        hints << Hint.new(quadrant: quadrant, value: hint, position: position)
       end
     end
   end

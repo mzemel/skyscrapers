@@ -30,9 +30,10 @@ class Control
           sleep 0.05
         end
       end
-      break unless changed_board
+      if !changed_board
+        check_for_win || check_for_loss || game.make_guess
+      end
     end
-    check_for_win || check_for_loss || make_guess
   end
 
   private
@@ -41,6 +42,9 @@ class Control
 
   def load_from_file
     data = YAML.load_file("examples/#{file}.yml")
+    if data['hints'].is_a?(String)
+      data['hints'] = data['hints'].split(',')
+    end
     @game = Game.new(data: data['hints'])
     # data[:cells].each { |cell| do_something }
   end
@@ -60,23 +64,17 @@ class Control
   def check_for_win
     return unless game.complete?
     puts "Completed in #{Time.now.to_f - @start} seconds"
-    true
+    exit
   end
 
   def check_for_loss
     return unless game.invalid?
     if game.guess_depth > 0
-      puts "FAKE NEWS"
       game.undo_last_guess
-      return perform
+      true
     else
       puts 'Failure'
-      true
+      exit
     end
-  end
-
-  def make_guess
-    game.make_guess
-    perform
   end
 end
