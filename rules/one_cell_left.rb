@@ -1,3 +1,4 @@
+# A process-of-elimination rule
 class OneCellLeft < Rule
   def perform
     game.hints.each do |hint|

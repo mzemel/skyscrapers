@@ -2,7 +2,7 @@ require 'rspec'
 require_relative '../loader.rb'
 
 RSpec.describe Cell do
-  let(:data) { [1,2,2,1] }
+  let(:data) { [1,2,2,1,1,2,2,1] }
   let(:game) { Game.new(data: data) }
 
   subject { game.cells.first }

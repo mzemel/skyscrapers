@@ -5,7 +5,7 @@ class Game
 
   def initialize(data:)
     raise "Incorrect number of hints" if data.size % 4 != 0
-    @power = Math.sqrt(data.size).to_i
+    @power = data.size / 4
     @data = data
     @hints = []
     @cells = []
@@ -69,6 +69,21 @@ class Game
     0.upto(power-1).each do |i|
       cell_at(i, cell.y).remove_option(cell.value)
       cell_at(cell.x, i).remove_option(cell.value)
+    end
+  end
+
+  def complete?
+    return false unless cells.all?(&:solved?)
+    expected_values = (1..power).to_a
+    hints[0..(power * 2 - 1)].all? do |hint|
+      cells_in_lane_of(hint).map(&:value).sort == expected_values
+    end
+  end
+
+  def invalid?
+    hints[0..(power * 2 - 1)].any? do |hint|
+      values = cells_in_lane_of(hint).map(&:value)
+      values.compact.uniq.size != values.compact.size
     end
   end
 
