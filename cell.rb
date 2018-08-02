@@ -17,6 +17,7 @@ class Cell
   def value=(val)
     @value = val
     @solved = true
+    # set options to empty
     game.remove_option_from_cells(self)
   end
 

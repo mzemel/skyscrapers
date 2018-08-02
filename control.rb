@@ -63,8 +63,9 @@ class Control
 
   def make_guess
     puts 'Have not won or lost; must guess or add more rules'
-    # make guess
-    # set guess state and guess depth
-    # perform
+    game.make_guess
+    guess = game.guesses.last
+    puts "Guessing #{guess.cell.value} at [#{guess.cell.x},#{guess.cell.y}] (other options: #{guess.other_options.join(',')})"
+    perform
   end
 end

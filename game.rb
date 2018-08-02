@@ -1,7 +1,7 @@
 require './loader.rb'
 
 class Game
-  attr_reader :power, :hints, :cells
+  attr_reader :power, :hints, :cells, :guesses
 
   def initialize(data:)
     raise "Incorrect number of hints" if data.size % 4 != 0
@@ -9,6 +9,7 @@ class Game
     @data = data
     @hints = []
     @cells = []
+    @guesses = []
     initialize_hints
     initialize_cells
   end
@@ -74,6 +75,7 @@ class Game
 
   def complete?
     return false unless cells.all?(&:solved?)
+    return false if invalid?
     expected_values = (1..power).to_a
     hints[0..(power * 2 - 1)].all? do |hint|
       cells_in_lane_of(hint).map(&:value).sort == expected_values
@@ -81,10 +83,67 @@ class Game
   end
 
   def invalid?
+    duplicate_values? || incorrect_cells_seen?
+  end
+
+  def duplicate_values?
     hints[0..(power * 2 - 1)].any? do |hint|
       values = cells_in_lane_of(hint).map(&:value)
       values.compact.uniq.size != values.compact.size
     end
+  end
+
+  # Cases
+  # 1. not all cells are filled in, and there are less seen (should be ok)
+  # 2. not all cells are filled in, and there are more seen (bad)
+  # 3. all cells are filled in, and it's equal (good)
+  # 4. all cells are filled in, and it's not equal (bad)
+  def incorrect_cells_seen?
+    # TODO: Move this into the hint responsibility
+    hints.any? do |hint|
+      highest_cell = 0
+      cells_seen = 0
+      cells_with_values = 0
+      cells_in_lane_of(hint).each do |cell|
+        cells_with_values += 1 if cell.value
+        if cell.value.to_i > highest_cell
+          cells_seen += 1
+          highest_cell = cell.value
+        end
+      end
+      (cells_with_values < power && cells_seen > hint.value) ||
+      (cells_with_values == power && cells_seen != hint.value)
+    end
+  end
+
+  def make_guess
+    cell_to_guess = cells.detect { |cell| cell.options.size == 2 }
+    cell_to_guess ||= cells.detect { |cell| cell.options.size == 3 }
+    options = cell_to_guess.options
+    cell_to_guess.value = options.shift
+    add_guess Guess.new(cell: cell_to_guess, other_options: options)
+  end
+
+  def add_guess(guess)
+    guesses << guess
+  end
+
+  # TODO: Every cell set during this guess depth must be reverted and their options restored
+  # But also when their options are modified, they must be restored as well.
+  def undo_last_guess
+    last_guess = guesses.pop
+    next_guess_option = last_guess.other_options.pop
+    last_guess.cell.value = next_guess_option
+    return if last_guess.other_options.empty?
+    add_guess(last_guess)
+  end
+
+  def guess_depth
+    guesses.size
+  end
+
+  def guessing
+    guess_depth > 0
   end
 
   private

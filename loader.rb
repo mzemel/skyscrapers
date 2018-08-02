@@ -1,5 +1,6 @@
 require './cell.rb'
 require './game.rb'
+require './guess.rb'
 require './hint.rb'
 require './printer.rb'
 require './rule.rb'
